@@ -1,18 +1,19 @@
 from dog import Dog, CONN, CURSOR
 
+
 class TestDog:
     '''Class Dog in dog.py'''
 
     def test_has_name_and_breed_attributes(self):
         '''initializes with name and breed attributes.'''
         dog = Dog(name="joey", breed="cocker spaniel")
-        assert(dog.name == "joey" and dog.breed == "cocker spaniel")
+        assert (dog.name == "joey" and dog.breed == "cocker spaniel")
 
     def test_creates_table(self):
         '''contains method "create_table()" that creates table "dogs" if it does not exist.'''
         CURSOR.execute("DROP TABLE IF EXISTS dogs")
         Dog.create_table()
-        assert(CURSOR.execute("SELECT * FROM dogs"))
+        assert (CURSOR.execute("SELECT * FROM dogs"))
 
     def test_drops_table(self):
         '''contains method "drop_table()" that drops table "dogs" if it exists.'''
@@ -30,7 +31,7 @@ class TestDog:
             WHERE type='table'
             ORDER BY name
         """
-        assert(len(CURSOR.execute(sql_table_names).fetchall()) == 0)
+        assert (len(CURSOR.execute(sql_table_names).fetchall()) == 0)
 
     def test_saves_dog(self):
         '''contains method "save()" that saves a Dog instance to the database.'''
@@ -44,14 +45,16 @@ class TestDog:
             WHERE name='joey'
             LIMIT 1
         """
-        assert(CURSOR.execute(sql).fetchone() == (1, "joey", "cocker spaniel"))
+        assert (CURSOR.execute(sql).fetchone()
+                == (1, "joey", "cocker spaniel"))
 
     def test_creates_dog(self):
         '''contains method "create()" that creates a new row in the database and returns a Dog instance.'''
         Dog.drop_table()
         Dog.create_table()
         joey = Dog.create("joey", "cocker spaniel")
-        assert((joey.id, joey.name, joey.breed) == (1, "joey", "cocker spaniel"))
+        assert ((joey.id, joey.name, joey.breed)
+                == (1, "joey", "cocker spaniel"))
 
     def test_creates_new_instance_from_db(self):
         '''contains method "new_from_db()" that takes a database row and creates a Dog instance.'''
@@ -69,7 +72,8 @@ class TestDog:
         """
         row = CURSOR.execute(sql).fetchone()
         joey = Dog.new_from_db(row)
-        assert((joey.id, joey.name, joey.breed) == (1, "joey", "cocker spaniel"))
+        assert ((joey.id, joey.name, joey.breed)
+                == (1, "joey", "cocker spaniel"))
 
     def test_gets_all(self):
         '''contains method "get_all()" that returns a list of Dog instances for every record in the database.'''
@@ -79,10 +83,10 @@ class TestDog:
         Dog.create("fanny", "cockapoo")
 
         dogs = Dog.get_all()
-        assert(
-            (dogs[0].id, dogs[0].name, dogs[0].breed) == \
-                (1, "joey", "cocker spaniel") \
-            and (dogs[1].id, dogs[1].name, dogs[1].breed) == \
+        assert (
+            (dogs[0].id, dogs[0].name, dogs[0].breed) ==
+            (1, "joey", "cocker spaniel")
+            and (dogs[1].id, dogs[1].name, dogs[1].breed) ==
                 (2, "fanny", "cockapoo")
         )
 
@@ -93,9 +97,9 @@ class TestDog:
         Dog.create("joey", "cocker spaniel")
 
         joey = Dog.find_by_name("joey")
-        assert(
-            (joey.id, joey.name, joey.breed) == \
-                (1, "joey", "cocker spaniel")
+        assert (
+            (joey.id, joey.name, joey.breed) ==
+            (1, "joey", "cocker spaniel")
         )
 
     def test_finds_by_id(self):
@@ -105,9 +109,9 @@ class TestDog:
         Dog.create("joey", "cocker spaniel")
 
         joey = Dog.find_by_id(1)
-        assert(
-            (joey.id, joey.name, joey.breed) == \
-                (1, "joey", "cocker spaniel")
+        assert (
+            (joey.id, joey.name, joey.breed) ==
+            (1, "joey", "cocker spaniel")
         )
 
     def test_finds_by_name_and_breed(self):
@@ -117,9 +121,9 @@ class TestDog:
         Dog.create("joey", "cocker spaniel")
 
         joey = Dog.find_or_create_by("joey", "cocker spaniel")
-        assert(
-            (joey.id, joey.name, joey.breed) == \
-                (1, "joey", "cocker spaniel")
+        assert (
+            (joey.id, joey.name, joey.breed) ==
+            (1, "joey", "cocker spaniel")
         )
 
     def test_finds_by_name_and_breed(self):
@@ -128,9 +132,9 @@ class TestDog:
         Dog.create_table()
 
         joey = Dog.find_or_create_by("joey", "cocker spaniel")
-        assert(
-            (joey.id, joey.name, joey.breed) == \
-                (1, "joey", "cocker spaniel")
+        assert (
+            (joey.id, joey.name, joey.breed) ==
+            (1, "joey", "cocker spaniel")
         )
 
     def test_saves_with_id(self):
@@ -139,11 +143,11 @@ class TestDog:
         Dog.create_table()
         joey = Dog("joey", "cocker spaniel")
         joey.save()
-        assert(
-            (joey.id, joey.name, joey.breed) == \
-                (1, "joey", "cocker spaniel")
+        assert (
+            (joey.id, joey.name, joey.breed) ==
+            (1, "joey", "cocker spaniel")
         )
-    
+
     def test_updates_record(self):
         '''contains a method "update()" that updates an instance's corresponding database record to match its new attribute values.'''
         Dog.drop_table()
@@ -152,5 +156,5 @@ class TestDog:
         joey.name = "joseph"
         joey.update()
 
-        assert(Dog.find_by_id(1).name == "joseph" \
-            and Dog.find_by_name("joey") == None)
+        assert (Dog.find_by_id(1).name == "joseph"
+                and Dog.find_by_name("joey") == None)
